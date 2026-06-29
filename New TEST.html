@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>كويزات هكرات مزنوقين - GPM601</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --primary-color: #bb86fc;
+            --primary-hover: #9965f4;
+            --text-color: #e0e0e0;
+            --success-color: #03dac6;
+            --error-color: #cf6679;
+            --neutral-color: #03a9f4;
+        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; }
+        h1 { text-align: center; color: var(--primary-color); margin-bottom: 10px; font-size: 1.8rem; }
+        .subtitle { text-align: center; font-size: 1.1rem; line-height: 1.6; color: #b3b3b3; margin-top: 0; margin-bottom: 30px; }
+        h2, h3 { text-align: center; color: var(--primary-color); }
+        .container { max-width: 1000px; margin: 0 auto; background: var(--card-bg); padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 15px; }
+        .sections-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .section-icon { background-color: #2c2c2c; border: 2px solid transparent; border-radius: 12px; padding: 15px 10px; text-align: center; cursor: pointer; transition: 0.3s; user-select: none; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .section-icon:hover { border-color: var(--primary-color); }
+        .section-icon.selected { background-color: var(--primary-color); color: #121212; border-color: var(--primary-color); }
+        .section-icon .icon { font-size: 2.5rem; margin-bottom: 10px; }
+        .section-icon .title { font-size: 0.95rem; font-weight: bold; line-height: 1.4; direction: rtl; }
+        .section-icon .count { font-size: 0.85rem; margin-top: 8px; background: rgba(0,0,0,0.2); padding: 4px 10px; border-radius: 10px; }
+        .controls-container { background: #252525; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
+        .settings-group { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #444; }
+        .settings-group label { display: flex; align-items: center; gap: 8px; font-size: 1.1rem; cursor: pointer; background: #1e1e1e; padding: 10px 15px; border-radius: 8px; border: 1px solid #444; transition: 0.2s; }
+        .settings-group label:hover { border-color: var(--primary-color); }
+        .settings-group input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary-color);}
+        .controls { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .controls input[type="number"] { padding: 10px; border-radius: 6px; border: 1px solid #444; background: #121212; color: white; font-size: 1rem; width: 150px; }
+        button { background-color: var(--primary-color); color: #121212; border: none; padding: 12px 25px; border-radius: 6px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button:hover { background-color: var(--primary-hover); }
+        button:disabled { background-color: #555; cursor: not-allowed; opacity: 0.7; }
+        .secondary-btn { background-color: #333; color: #fff; border: 1px solid #555; padding: 10px 20px; font-size: 1rem; }
+        .secondary-btn:hover:not(:disabled) { background-color: #444; }
+        #quiz-area, #result-area, #review-area { display: none; }
+        .quiz-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+        .section-badge { background: rgba(187, 134, 252, 0.15); color: var(--primary-color); padding: 6px 15px; border-radius: 20px; font-size: 0.95rem; font-weight: bold; border: 1px solid var(--primary-color); }
+        .question-box { font-size: 1.2rem; margin-bottom: 20px; line-height: 1.6; background: #252525; padding: 20px; border-radius: 8px; border-right: 5px solid var(--primary-color); }
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .option-btn { background-color: #2c2c2c; color: white; border: 2px solid transparent; padding: 15px; border-radius: 8px; font-size: 1.05rem; text-align: right; cursor: pointer; transition: 0.2s; }
+        .option-btn:hover:not(:disabled) { background-color: #3d3d3d; }
+        .option-btn.correct { background-color: var(--success-color) !important; color: #000 !important; border-color: var(--success-color) !important; }
+        .option-btn.wrong { background-color: var(--error-color) !important; color: #fff !important; border-color: var(--error-color) !important; }
+        .option-btn.selected-neutral { background-color: var(--neutral-color); color: #000; border-color: var(--neutral-color); }
+        .note-box { margin-top: 15px; padding: 15px; background-color: rgba(3, 218, 198, 0.1); border-right: 4px solid var(--success-color); display: none; font-size: 1rem; line-height: 1.5; white-space: pre-wrap; }
+        .progress { font-weight: bold; color: var(--primary-color); font-size: 1.1rem; margin: 0;}
+        .nav-buttons { margin-top: 25px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 15px; background: #252525; padding: 15px; border-radius: 8px; }
+        .stats-box { text-align: center; font-size: 1.5rem; margin-top: 20px; background: #252525; padding: 30px; border-radius: 10px;}
+        #review-container .option-btn { cursor: default; }
+        #review-container .option-btn:hover { background-color: #2c2c2c; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>كويزات هكرات مزنوقين لمادة إدارة المشاريع المعلوماتية - GPM601 💜</h1>
+    <p class="subtitle">
+        هاد الموقع شامل لجميع التمارين الموجودة بامتحانية هكرات مزنوقين لحتى يسهل عليكم حفظها ومراجعتها 💜<br>
+        لا تنسونا من دعواتكم وموفقين يارب🤍🔥
+    </p>
+    
+    <div id="setup-area">
+        <div class="header-flex">
+            <h3>حدد الأقسام التي ترغب باختبار نفسك بها:</h3>
+            <button id="clear-sections-btn" class="secondary-btn">إلغاء تحديد الأقسام ❌</button>
+        </div>
+        <div class="sections-grid" id="sections-container"></div>
+        <div class="controls-container">
+            <div class="settings-group">
+                <label><input type="checkbox" id="setting-shuffle-q" checked> خلط الأسئلة</label>
+                <label><input type="checkbox" id="setting-shuffle-o" checked> خلط الخيارات</label>
+                <label><input type="checkbox" id="setting-instant-fb" checked> التصحيح الفوري</label>
+            </div>
+            <div class="controls">
+                <label>عدد أسئلة الاختبار:</label>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+                    <input type="number" id="num-questions" placeholder="أدخل العدد" min="1">
+                    <button id="max-questions-btn" class="secondary-btn">تحديد جميع أسئلة الأقسام المحددة</button>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button id="start-btn" style="width: 250px;">ابدأ الاختبار 🚀</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="quiz-area">
+        <div class="quiz-header">
+            <div class="progress" id="progress-text">السؤال 1 من 10</div>
+            <div class="section-badge" id="section-badge"></div>
+        </div>
+        <div class="question-box" id="question-text">نص السؤال</div>
+        <div class="options" id="options-container"></div>
+        <div class="note-box" id="note-box"></div>
+        <div class="nav-buttons">
+            <button id="prev-btn" class="secondary-btn">❯ السابق</button>
+            <button id="quit-btn" class="secondary-btn" style="background-color: var(--error-color); color: #fff; border:none;">إنهاء الاختبار 🏠</button>
+            <button id="next-btn">التالي ❮</button>
+            <button id="finish-btn" style="display: none; background-color: var(--success-color); color: #000;">إرسال النتيجة 🏁</button>
+        </div>
+    </div>
+
+    <div id="result-area">
+        <h2>النتيجة النهائية</h2>
+        <div class="stats-box" id="score-text"></div>
+        <div class="nav-buttons" style="justify-content: center; margin-top: 30px;">
+            <button id="retry-wrong-btn" style="display: none;">إعادة حل الخاطئة ↻</button>
+            <button id="review-btn" class="secondary-btn">مراجعة الاختبار والتصحيح 📝</button>
+            <button id="restart-btn">العودة للرئيسية 🏠</button>
+        </div>
+    </div>
+
+    <div id="review-area">
+        <h2>مراجعة الإجابات</h2>
+        <div id="review-container"></div>
+        <div class="nav-buttons" style="justify-content: center; margin-top: 30px;">
+            <button id="back-to-results-btn" class="secondary-btn">العودة للنتيجة 🔙</button>
+            <button id="restart-from-review-btn">العودة للرئيسية 🏠</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const sectionsInfo = [
+        { id: 1, name: "مقدمة في إدارة المشاريع (ج1) – CH1", icon: "📖" },
+        { id: 2, name: "مقدمة في إدارة المشاريع (ج2) – CH2", icon: "📗" },
+        { id: 3, name: "إدارة المشاريع وسياق تكنولوجيا المعلومات(ج1)-CH3", icon: "💻" },
+        { id: 4, name: "إدارة المشاريع وسياق تكنولوجيا المعلومات(ج2)-CH4", icon: "🖥️" },
+        { id: 5, name: "مجموعات عمليات إدارة المشروع -CH5", icon: "⚙️" },
+        { id: 6, name: "إدارة التكامل في المشاريع (ج1) -CH6", icon: "🧩" },
+        { id: 7, name: "إدارة التكامل في المشاريع (ج2) -CH7", icon: "🔗" },
+        { id: 8, name: "إدارة نطاق المشروع -CH8", icon: "🎯" },
+        { id: 9, name: "إدارة الجدول الزمني في المشروع (ج1) -CH9", icon: "⏳" },
+        { id: 10, name: "إدارة الجدول الزمني في المشروع(ج2) -CH10", icon: "🗓️" },
+        { id: 11, name: "إدارة تكلفة المشروع(ج1) -CH11", icon: "💰" },
+        { id: 12, name: "إدارة تكلفة المشروع(ج2) -CH12", icon: "💵" }
+    ];
+
+    const questionsData = [
+        // ======================= CH1 =======================
+        { section: 1, text: `عما يُعبر التعريف التالي: "مسعى مؤقت يتم إجراؤه لإنشاء منتج أو خدمة أو نتيجة فريدة"؟`, options: ["المنظمة", "البرنامج", "المشروع", "المحفظة"], correctIndex: 2, note: null },
+        { section: 1, text: `ما هو الخيار الذي لا يُعتبر من سمات المشروع؟`, options: ["ينطوي المشروع على حالة اليقين", "للمشروع غرض فريد", "المشروع مؤقت", "يقود المشروع التغيير ويتيح إنشاء القيمة"], correctIndex: 0, note: null },
+        { section: 1, text: `مما يتألف القيد الثلاثي للمشروع؟`, options: ["النطاق والوقت والموارد", "النطاق والوقت والتكلفة", "النطاق والتكلفة والموارد", "الموارد والوقت والتكلفة"], correctIndex: 1, note: null },
+        { section: 1, text: `هم كل شخص أو جهة لها مصلحة معينة في نتيجة المشروع، أو تكون منخرطة بنشاط في المشروع، ويلعبون أدواراً ويتحملون مسؤوليات مختلفة.`, options: ["أصحاب المصلحة Stakeholders", "أصحاب العمل Owners", "أصحاب الأسهم Stokeholders", "العملاء Customers"], correctIndex: 0, note: null },
+        { section: 1, text: `هي العمل المنجز في المنظمات للحفاظ على استمرارية العمل.`, options: ["المشروع", "العمليات", "DevOps"], correctIndex: 1, note: `توضيح ممكن يجي تعاريف لباقي المصطلحات:\nالمشروع هو مسعى مؤقت يتم لإنشاء منتج أو خدمة أو نتيجة فريدة.\nDevOps هو مصطلح جديد يستخدم لوصف ثقافة التعاون بين فرق تطوير البرمجيات و فرق العمليات.` },
+        { section: 1, text: `هي الجهة يتم تنفيذ وتسليم نتيجة المشروع لها و تسمى بالجهة الطارحة.`, options: ["الزبون Customer", "مدير المشروع Project manager", "أعضاء فريق المشروع Project team members", "الراعي Sponsor"], correctIndex: 0, note: null },
+        { section: 1, text: `من مهام مدير المشروع`, options: ["يضع الجدول الزمني وموازنة المشروع بالتعاون مع فريق العمل", "يقود فريق العمل لتنفيذ خطط المشروع.", "يراقب الأداء و يتخذ الإجراءات التصحيحية.", "يطلع الراعي و أصحاب المصلحة على تقدم العمل.", "يدير طلبات تغيير النطاق بالتنسيق مع الراعي", "يعمل كحلقة وصل بين فريق المشروع و أصحاب المصلحة", "جميع ما سبق صحيح"], correctIndex: 6, note: `توضيح مهم: معرفة جميع المهام المذكورة، ممكن يجي سؤال بصيغة مختلفة، صح وخطأ أو اختر أي مما يلي من مهام مدير المشروع.` },
+        { section: 1, text: `أي من مما يلي ليس من مهام الراعي:`, options: ["تأمين الموارد المالية للمشروع.", "تحمل المسؤولية النهائية لنجاح المشروع.", "تخويل مدير المشروع و فريق العمل باستخدام الموارد", "مراجعة التقدم و الجودة.", "توقع ميثاق المشروع و نشره.", "يراقب الأداء و يتخذ الإجراءات التصحيحية.", "التوقيع على جميع وثائق التخطيط و طلبات التغيير.", "مراقبة و إرشاد مدير المشروع و فريق العمل.", "تسريع الأنشطة"], correctIndex: 5, note: `توضيح مهم: معرفة جميع المهام المذكورة، ممكن يجي سؤال بصيغة مختلفة مثل صح وخطأ أو اختر أي مما يلي من مهام الراعي.` },
+        { section: 1, text: `من سمات / صفات المشروع أنه مؤقت.`, options: ["صح", "خطأ"], correctIndex: 0, note: null },
+        { section: 1, text: `أي مما يلي من سمات المشروع`, options: ["للمشروع غرض فريد", "المشروع مؤقت", "يقود المشروع التغير ويتيح إنشاء القيمة", "يتم تطوير المشروع باستخدام التفصيل التدريجي", "يتطلب المشروع موارداً، غالباً من مناطق مختلفة", "يجب أن يكون للمشروع عميل أو راع أساسي", "ينطوي المشروع على عدم اليقين", "جميع ما سبق صحيح"], correctIndex: 7, note: null },
+        { section: 1, text: `ما هو دور الراعي بالمشروع؟`, options: ["تنفيذ المهام التقنية وكتابة التقارير الفنية", "مراقبة جودة المنتج النهائي وضمان المعايير التقنية", "إدارة فريق العمل وتوزيع المهام اليومية على الأعضاء", "تأمين الموارد المالية للمشروع وتخويل مدير المشروع وفريق العمل باستخدام الموارد"], correctIndex: 3, note: null },
+        { section: 1, text: `يجب توقيع ميثاق المشروع من`, options: ["الراعي", "مدير المشروع", "الراعي ومدير المشروع معاً", "أصحاب المصلحة الخارجيين"], correctIndex: 0, note: null },
+        { section: 1, text: `ما هي إدارة المشاريع ؟`, options: ["هي تطبيق المعرفة والمهارات والأدوات والتقنيات على أنشطة المشروع لتلبية متطلبات المشروع", "هي عملية تصنيع المنتجات وبيعها في الأسواق", "هي إدارة العمليات اليومية المتكررة في المنظمة", "هي تخطيط الموازنة المالية السنوية للمنظمة"], correctIndex: 0, note: null },
+        { section: 1, text: `تتضمن توليد معلومات المشروع وجمعها ونشرها وتخزينها.`, options: ["إدارة اتصالات المشروع Project communications management", "إدارة مخاطر المشروع Project risk management", "إدارة مشتريات المشروع Project procurement management", "إدارة أصحاب المصلحة Project stakeholder management", "إدارة تكامل المشروع Project integration management"], correctIndex: 0, note: `توضيح ممكن يجي تعاريف لباقي المصطلحات:\nإدارة مخاطر المشروع تشمل تحديد وتحليل والاستجابة لمخاطر للمشروع.\nإدارة مشتريات المشروع: تتضمن اقتناء أو شراء سلع أو خدمات المشروع من خارج المنظمة المنفذة.\nإدارة أصحاب المصلحة تشمل تحديد وتحليل احتياجات أصحاب المصلحة، وإدارة ومراقبة مشاركتهم طوال عمر المشروع.\nإدارة تكامل المشروع: هي وظيفة شاملة تؤثر وتتأثر بجميع المجالات المعرفية.` },
+        { section: 1, text: `تتكون من إعداد وإدارة و موازنة المشروع.`, options: ["إدارة نطاق المشروع Project scope management", "إدارة الجدول الزمني للمشروع Project schedule management", "إدارة تكلفة المشروع Project cost management", "إدارة جودة المشروع Project quality management", "إدارة موارد المشروع Project resource management"], correctIndex: 2, note: `توضيح ممكن يجي تعاريف لباقي المصطلحات:\nإدارة نطاق المشروع تتضمن تحديد و إدارة جميع الأعمال المطلوبة لإنجاز المشروع بنجاح.\nإدارة الجدول الزمني للمشروع تتضمن تقدير المدة التي سيستغرقها إنجاز العمل، ووضع جدول زمني مقبول للمشروع، وضمان الانتهاء من المشروع في الوقت المناسب.\nإدارة جودة المشروع: تضمن أن المشروع سوف يلبي الاحتياجات المعلنة أو الضمنية.\nإدارة موارد المشروع الاستفادة الفعالة من الأشخاص و الموارد المادية.` },
+        { section: 1, text: `أن يكون للمشروع بداية ونهاية محددتان. ما هي السمة التي تعبر عن ذلك؟`, options: ["المشروع مؤقت", "المشروع فريد"], correctIndex: 0, note: null },
+        { section: 1, text: `يجب أن يكون لكل مشروع هدف محدد جيداً، ما هي السمة التي تعبر عن ذلك؟`, options: ["المشروع مؤقت", "المشروع فريد"], correctIndex: 1, note: null },
+        { section: 1, text: `يتم البدء في المشروع لإحداث تغيير من أجل تلبية حاجة أو رغبة معينة. ويكون الغرض منه تحقيق هدف محدد يغير السياق من الحالة الراهنة إلى حالة مستقبلية مرغوبة أو أكثر قيمة. ما هي السمة التي تعبر عن ذلك؟`, options: ["يقود المشروع التغير ويتيح إنشاء القيمة", "يتم تطوير المشروع باستخدام التفصيل التدريجي"], correctIndex: 0, note: null },
+        { section: 1, text: `غالباً ما يتم تعريف المشاريع على نطاق واسع عندما تبدأ ومع مرور الوقت، تصبح التفاصيل المحددة للمشروع أكثر وضوحاً. ما هي السمة التي تعبر عن ذلك ؟`, options: ["يقود المشروع التغير ويتيح إنشاء القيمة", "تطوير المشروع باستخدام التفصيل التدريجي"], correctIndex: 1, note: `توضيح ممكن يجي أمثلة لباقي السمات:\nيتطلب المشروع موارداً، غالباً من مناطق مختلفة: تشمل هذه الموارد الأشخاص والأجهزة والأصول الأخرى.\nأن يكون للمشروع عميل أو راع أساسي: لدى المشاريع العديد من الأطراف المهتمة أو أصحاب المصلحة، ولكن لكي ينجح المشروع يجب على شخص ما أن يأخذ الدور الأساسي للراعية، ويوفر التوجيه والتمويل للمشروع.\nينطوي المشروع على عدم اليقين: من الصعب أحياناً تحديد أهداف المشروع بوضوح، وتقدير المدة أو تحديد التكلفة.` },
+        { section: 1, text: `ما الفرق الأساسي بين المشروع والعمليات؟`, options: ["المشروع لا يحتاج ميزانية، العمليات تحتاج ميزانية", "المشروع مؤقت له بداية ونهاية، العمليات مستمرة ومتكررة", "المشروع لا يحتاج فريق عمل، العمليات تحتاج فريق", "المشروع يستخدم مصادر محددة، العمليات تستخدم مصادر متجددة"], correctIndex: 1, note: null },
+        { section: 1, text: `أي من التالي يُعتبر مشروعًا وليس عمليات؟`, options: ["دفع رواتب الموظفين شهريا", "الصيانة الدورية لأجهزة الحاسوب", "تطوير نظام معلومات جديد للشركة", "الرد على استفسارات العملاء يومياً"], correctIndex: 2, note: null },
+        { section: 1, text: `أي من التالي يعتبر عمليات وليس مشروعًا؟`, options: ["بناء موقع إلكتروني جديد للشركة", "تركيب شبكة حاسوب جديدة في مبنى", "ترحيل قاعدة البيانات إلى نظام سحابي", "إدخال البيانات اليومية وإعداد التقارير الشهرية"], correctIndex: 3, note: null },
+        { section: 1, text: `من خصائص المشروع`, options: ["مستمر، متكرر، بدون تاريخ انتهاء", "مؤقت، فريد، له بداية ونهاية محددة، يهدف لإنتاج منتج أو خدمة أو نتيجة فريدة", "روتيني ويتم تنفيذه بنفس الطريقة كل مرة", "لا يحتاج تخطيط أو إدارة"], correctIndex: 1, note: null },
+        { section: 1, text: `أي من التالي يُعد مثالاً على مشروع تكنولوجيا معلومات؟`, options: ["تطوير نظام تخطيط موارد المؤسسة (ERP) جديد", "بناء جسر جديد في المدينة", "إعداد الموازنة السنوية للشركة", "تنظيف المكاتب يوميًا"], correctIndex: 0, note: null },
+        { section: 1, text: `أي من التالي لا يُعد مثالاً على مشروع تكنولوجيا معلومات؟`, options: ["شراء نظام فوترة جاهز وتخصيصه", "تحديث نظام ERP حديث", "تطوير تطبيق هاتف ذكي جديد", "بناء مستشفى جديد"], correctIndex: 3, note: null },
+        { section: 1, text: `تركيب شبكة حاسوب جديدة في مبنى الشركة يُعتبر:`, options: ["عمليات، لأنه يتم بشكل يومي", "ليس مشروعاً ولا عمليات", "مشروع تكنولوجيا معلومات، لأنه عمل مؤقت وفريد وينتج نتيجة جديدة", "عمليات، لأنه يحتاج فريق تقني"], correctIndex: 2, note: null },
+        { section: 1, text: `هل عملية إطلاق منتج ما في شركة أو سوق جديد تعتبر مشروع أم عمليات?`, options: ["مشروع", "عمليات", "مشروع وعمليات معاً", "لا شيء مما سبق"], correctIndex: 0, note: null },
+
+        // ======================= CH2 =======================
+        { section: 2, text: `عما يُعبر التعريف التالي: "مجموعة من المشاريع البرامج الفرعية الأنشطة ذات الصلة التي تُدار بطريقة منسقة للحصول على فوائد مراقبة غير متاحة من إدارتها بشكل فردي " ؟`, options: ["المنظمة", "البرنامج", "المشروع", "المحفظة"], correctIndex: 1, note: null },
+        { section: 2, text: `عما يُعبر التعريف التالي: "مشاريع برامج محافظ فرعية عمليات تدار كمجموعة لتحقيق أهداف إستراتيجية"؟`, options: ["المنظمة", "البرنامج", "المشروع", "المحفظة"], correctIndex: 3, note: null },
+        { section: 2, text: `هي إطار عمل يتم فيه دمج إدارة المحافظ والبرامج والمشاريع مع عناصر التمكين التنظيمية من أجل الأهداف الإستراتيجية.`, options: ["إدارة المشاريع التنظيمية", "الإدارة الاستراتيجية", "المنظمة", "إدارة التغيير"], correctIndex: 0, note: null },
+        { section: 2, text: `يشمل مثلث المواهب الذي طوره معهد إدارة المشاريع أنواع المهارات التي يحتاجها مدير المشاريع للتطوير المستمر جميع الخيارات التالية ما عدا:`, options: ["مهارات إدارة المشاريع الفنية", "مهارات إدارة الأعمال الاستراتيجية", "مهارات التسويق", "مهارات القيادة"], correctIndex: 2, note: null },
+        { section: 2, text: `ما اسم المنظمة الدولية التي تعنى بنشر ثقافة إدارة المشاريع في العالم المهني تمنح شهادات مهنية في ذلك؟`, options: ["PMI", "ISO", "PMP", "UNDP"], correctIndex: 0, note: null },
+        { section: 2, text: `هي مرحلة إنجاز المشاريع لاستمرار تشغيل المنظمة.`, options: ["محفظة المغامرة Venture", "محفظة النمو Growth", "المحفظة الأساسية Core"], correctIndex: 2, note: `توضيح ممكن يجي تعاريف لباقي المصطلحات:\nمحفظة المغامرة هي المساعدة على تحويل الأعمال من خلال تطوير شركات أوثق مع العملاء الموردين.\nمحفظة النمو هو مساعدة الشركة على زيادة إيراداتها.` },
+        { section: 2, text: `شهادة محترف في إدارة المشاريع PMP يتم الحصول عليها من معهد إدارة المشاريع PMI، وفائدتها هي الاعتراف بالجودة وضمانها في المهنة.`, options: ["صح", "خطأ"], correctIndex: 0, note: null },
+        { section: 2, text: `شهادة محترف في إدارة المشاريع PMP تساعد على:`, options: ["توثيق خبرة و تعليم كافيين في إدارة المشاريع.", "الموافقة على اتباع مدونة السلوك المهني للمعهد.", "اجتياز اختبار شامل", "تعد معياراً لمديري المشاريع", "جميع ما سبق"], correctIndex: 4, note: null },
+        { section: 2, text: `هدفه تحقيق الانسجام بين احتياجات المنظمة والأشخاص، يعتبر من ضمن إطار:`, options: ["الإطار الهيكلي.", "إطار الموارد البشرية.", "الإطار السياسي.", "الإطار الرمزي"], correctIndex: 1, note: `توضيح: ممكن يجي تعاريف لباقي المصطلحات:\nالإطار الهيكلي: هو هيكل تنظيمي يتعامل مع كيفية تشكيل المنظمة.\nالإطار السياسي: هو إطار يؤكد أن المنظمات هي تحالفات تتكون من أفراد و جماعات لها مصالح متنوعة.\nالإطار الرمزي: هو إطار يركز على الرموز و المعاني.` },
+        { section: 2, text: `هو شخص يوفر القيادة والتوجيه للمدراء الذين يرأسون المشاريع ضمن البرنامج.`, options: ["البرنامج", "مدير البرنامج", "أصحاب المصلحة", "الراعي"], correctIndex: 1, note: null },
+        { section: 2, text: `توفير المزيد من الوصول اللاسلكي إلى الإنترنت، وترقية التجهيزات والبرمجيات، وتعزيز أمن الأنظمة وتطوير معايير المنظمة الخاصة بتكنولوجيا المعلومات والحفاظ عليها، هو مثال على:`, options: ["البنية التحتية infrastructure", "تطوير التطبيقات applications development", "دعم المستخدمين user support"], correctIndex: 0, note: `توضيح ممكن يجي أمثلة لباقي المصطلحات:\nتطوير التطبيقات: تحديث نظام تخطيط موارد المؤسسة (ERP) ، أو شراء نظام فوترة جاهزة جديدة، أو تطوير قدرة جديدة لنظام إدارة علاقات العملاء.\nدعم المستخدمين: مشروع نظام بريد إلكتروني أفضل أو يطور تدريباً تقنياً للمستخدمين.` },
+        { section: 2, text: `ما الهدف من إدارة المحافظ للمشاريع؟`, options: ["تحسين التواصل بين أعضاء فريق المشروع", "إدارة البرامج والمشاريع الفردية فقط", "تقليل عدد المشاريع الجارية في المنظمة", "هدف استثماري ربحي"], correctIndex: 3, note: null },
+        { section: 2, text: `ما هي الشهادة الخاصة بمدير مشروع احترافي؟`, options: ["CAPM", "PMP", "PgMP", "PMI-ACP"], correctIndex: 1, note: null },
+        { section: 2, text: `ما هي مهارات مدير المشروع؟`, options: ["مهارات تقنية وبرمجية فقط", "مهارات القيادة، التواصل، التفاوض، حل المشكلات، والتأثير في المنظمة", "مهارات المحاسبة المالية والتدقيق", "مهارات التسويق والمبيعات"], correctIndex: 1, note: null },
+
+        // ======================= CH3 =======================
+        { section: 3, text: `عما يُعبر التعريف التالي: " عبارة عن مجموعات من المكونات المتفاعلة التي تعمل داخل بيئة ما لتحقيق بعض الأغراض"؟`, options: ["المنظمة", "النظام", "المشروع", "المحفظة"], correctIndex: 1, note: null },
+        { section: 3, text: `عند محاولة فهم المنظمات يتم التركيز على أربع وجهات نظر مختلفة، ما هي وجهات النظر هذه؟`, options: ["الموارد البشرية، والموارد المالية والسياسية، والرمزية", "الهيكلية، والموارد المالية، والسياسية، والرمزية", "الهيكلية، والموارد البشرية، الاقتصادية والاجتماعية", "الهيكلية، والموارد البشرية والسياسية، والرمزية"], correctIndex: 3, note: null },
+        { section: 3, text: `ما هو نوع الهيكل التنظيمي للمشاريع المستخدم عندما يقدم المديرون الوظيفيون أو نواب الرئيس في تخصصات مثل الهندسة والتصنيع وتكنولوجيا المعلومات والموارد البشرية تقارير إلى الرئيس التنفيذي، ويتمتع الموظفون بمهارات متخصصة ضمن مجالهم؟`, options: ["الهيكل التنظيمي الوظيفي", "الهيكل التنظيمي المشاريعي", "الهيكل التنظيمي المصفوفي", "الهيكل التنظيمي الشبكي"], correctIndex: 0, note: null },
+        { section: 3, text: `ما هو نوع الهيكل التنظيمي للمشاريع المستخدم عندما يقدم مديرو البرامج تقاريرهم مباشرة إلى الرئيس التنفيذي. ويمتلك الموظفون مجموعة متنوعة من المهارات اللازمة لإنجاز المشاريع ضمن برامجهم. وتكسب المنظمة التي تستخدم هذا نوع من الهياكل إيراداتها بشكل أساسي من تنفيذ المشاريع لمصالح منظمات أخرى بموجب العقد؟`, options: ["الهيكل التنظيمي الوظيفي", "الهيكل التنظيمي المشاريعي", "الهيكل التنظيمي المصفوفي", "الهيكل التنظيمي الشبكي"], correctIndex: 1, note: null },
+        { section: 3, text: `ما هو نوع الهيكل التنظيمي للمشاريع عندما يقدم الموظفون تقاريرهم إلى كل من المدير الوظيفي وإلى واحد أو أكثر من مديري المشاريع؟`, options: ["الهيكل التنظيمي الوظيفي", "الهيكل التنظيمي المشاريعي", "الهيكل التنظيمي المصفوفي", "الهيكل التنظيمي الشبكي"], correctIndex: 2, note: null },
+        { section: 3, text: `ما هو الهيكل الذي تتبعه عادة الكليات والجامعات؟`, options: ["الهيكل الوظيفي", "الهيكل المشاريعي", "الهيكل المصفوفي"], correctIndex: 0, note: null },
+        { section: 3, text: `نهج لحل المشكلات يتطلب تحديد نطاق النظام، وتقسيمه إلى مكونات، ثم تحديد وتقييم مشاكله وفرصه وقيوده واحتياجاته.`, options: ["إدارة النظم systems management", "تحليل النظم systems analysis"], correctIndex: 1, note: null },
+        { section: 3, text: `تتناول القضايا التجارية و التكنلوجية و التنظيمية المرتبطة بإنشاء النظام وصيانته وتعديله.`, options: ["إدارة النظم systems management", "تحليل النظم systems analysis"], correctIndex: 0, note: null },
+        { section: 3, text: `يمثل الأرضية الوسطى بين الهياكل الوظيفية والهياكل المشاريعية.`, options: ["الهيكل التنظيمي الوظيفي", "الهيكل التنظيمي المشاريعي", "الهيكل التنظيمي المصفوفي", "الهيكل التنظيمي الشبكي"], correctIndex: 2, note: null },
+        { section: 3, text: `يتمتع مديرو المشاريع بأكبر قدر من السلطة في:`, options: ["الهيكل التنظيمي الوظيفي", "الهيكل التنظيمي المشاريعي", "الهيكل التنظيمي المصفوفي", "الهيكل التنظيمي الشبكي"], correctIndex: 1, note: null },
+        { section: 3, text: `هي مشاريع ومحافظ فرعية وعمليات تدار كمجموعة لتحقيق أهداف استراتيجية، كما أن بعض المنظمات تستخدم نهجاً أكثر انضباطاً لإدارة المحافظ`, options: ["إدارة محافظ المشاريع", "إدارة المشاريع التنظيمية"], correctIndex: 0, note: null },
+        { section: 3, text: `هو نهج شامل وتحليلي لحل المشكلات المعقدة.`, options: ["فلسفة النظم", "نهج النظم"], correctIndex: 1, note: null },
+        { section: 3, text: `هو نموذج شامل للتفكير في الأشياء كنظم.`, options: ["فلسفة النظم", "نهج النظم"], correctIndex: 0, note: null },
+        { section: 3, text: `أصحاب المصلحة الداخليين هم:`, options: ["راعي المشروع وفريق المشروع ومن يتأثر بالمشروع داخليا", "العملاء والموردين والمنافسين", "الحكومة والجهات التنظيمية والمجتمع المحلي", "المقاولين من الباطن والاستشاريين الخارجيين"], correctIndex: 0, note: null },
+        { section: 3, text: `أصحاب المصلحة الخارجيين هم:`, options: ["الموردين والمنافسين ومن يتأثر بالمشروع من خارج المنظمة", "راعي المشروع ومدير المشروع وأعضاء الفريق", "الإدارة العليا والأقسام الداخلية الأخرى", "فريق إدارة المشروع فقط"], correctIndex: 0, note: null },
+        { section: 3, text: `إلى ماذا يرمز هذا الاختصار CIO`, options: ["عمليات تكنولوجيا المعلومات المعتمدة Certified IT Operations", "الرئيس التنفيذي للاستثمار Chief Investment Officer", "الرئيس التنفيذي لتكنولوجيا المعلومات Chief Information Officer", "الرئيس التنفيذي للابتكار Chief Innovation Officer"], correctIndex: 2, note: null },
+        { section: 3, text: `إلى ماذا يرمز هذا الاختصار PMO`, options: ["مكتب إدارة البرامج Program Management Office", "مكتب إدارة المشروع Project Management Office", "مكتب ضمان جودة المشروع Project Quality Office", "مكتب إدارة المحافظ Portfolio Management Office"], correctIndex: 1, note: null },
+
+        // ======================= CH4 =======================
+        { section: 4, text: `هي عملية تستخدم لتحديد المنتجات وإنشائها وتسليمها.`, options: ["دورة حياة المشروع", "دورة حياة المنتج", "إجراءات العمل", "الجودة"], correctIndex: 1, note: null },
+        { section: 4, text: `ما هو نوع دورة حياة المنتج أو التطوير التي يتم من خلالها تحديد النطاق والجدول الزمني والتكلفة في وقت مبكر، ويتم إدارة التغييرات في النطاق بعناية ؟`, options: ["دورة الحياة التكرارية", "دورة الحياة التزايدية", "دورة الحياة التكيفية", "دورة الحياة التنبؤية"], correctIndex: 3, note: null },
+        { section: 4, text: `يحتوي نموذج . على مراحل خطية محددة جيداً لتحليل الأنظمة والتصميم والبناء والاختبار والدعم. يفترض هذا النموذج أن المتطلبات ستظل مستقرة بعد تحديدها.`, options: ["دورة الحياة الحلزونية spiral life cycle model", "دورة حياة النماذج الأولية prototyping life cycle model", "دورة حياة الشلال waterfall life cycle model", "دورة حياة التطوير السريع Rapid Application Development (RAD) life cycle model"], correctIndex: 2, note: null },
+        { section: 4, text: `يستخدم نموذج . لتطوير نماذج أولية للبرمجيات لتوضيح متطلبات المستخدم التشغيلية، وهذا يتطلب مشاركة كبيرة من المستخدمين. وهو يسمح للمطورون بتوليد المتطلبات الوظيفية ومواصفات التصميم المادية في وقت واحد ؟`, options: ["دورة حياة النماذج الأولية prototyping life cycle model", "دورة الحياة الحلزونية spiral life cycle model", "دورة حياة الشلال waterfall life cycle model", "دورة حياة التطوير السريع Rapid Application Development (RAD) life cycle model"], correctIndex: 0, note: null },
+        { section: 4, text: `هو اقتناء المنظمة للسلع والخدمات من مصدر خارجي.`, options: ["globalization", "outsourcing", "virtual team", "agile"], correctIndex: 1, note: null },
+        { section: 4, text: `ما مزايا الفرق الافتراضية:`, options: ["تخفيض التكاليف، توفير المزيد من الخبرة، زيادة القدرة التنافسية، تحسين التوازن بين العمل والحياة", "زيادة عبء المهام، انعدام المرونة، رفع التكاليف", "عزل الأعضاء وزيادة مشكلات الاتصال", "تقليل الخبرة وزيادة الاعتماد على الحضور الشخصي"], correctIndex: 0, note: null },
+        { section: 4, text: `ما مساوئ الفرق الافتراضية:`, options: ["عزل الأعضاء الذين لا يتأقلمون بشكل جيد مع العمل في البيئة الافتراضية", "زيادة احتمالية حدوث مشكلات في الاتصال وزيادة الاعتماد على التكنولوجيا لإنجاز العمل", "الحد من قدرة الأعضاء على التواصل ونقل المعلومات بشكل غير رسمي", "جميع ما سبق"], correctIndex: 3, note: null },
+        { section: 4, text: `إلى ماذا يرمز هذا الاختصار RAD`, options: ["نموذج دورة حياة التطوير السريع Rapid Application Development", "قاعدة بيانات الوصول عن بعد Remote Access Database", "وثيقة تحليل المخاطر Risk Analysis Document", "مخطط تخصيص الموارد Resource Allocation Diagram"], correctIndex: 0, note: null },
+        { section: 4, text: `ما هي أدوات التطوير السريع RAD ؟`, options: ["SWOT, WBS, PERT", "Scrum, Kanban, Sprint", "CASE, JRP, JAD", "EVM, CPM, PMBOK"], correctIndex: 2, note: null },
+        { section: 4, text: `ما هو أهم متطلب لنجاح منهجية RAD ؟`, options: ["توثيق مفصل لكل مرحلة", "مشاركة كبيرة من المستخدم", "فريق عمل ذو عدد كبير", "موازنة مالية ضخمة"], correctIndex: 1, note: null },
+        { section: 4, text: `تستخدم التكرارات في دورة الحياة التكرارية لتطوير المنتج من خلال سلسلة من الدورات المتكررة لإضافة وظائف المنتج، وتكون درجة عالية من التغيير وتواتر منخفض للتسليم.`, options: ["صح", "خطأ"], correctIndex: 0, note: null },
+        { section: 4, text: `أي مما يلي يعبر عن مفهوم الناتج أو المخرج (deliverable) ؟`, options: ["جميع الأعمال والعمليات المستخدمة لإنشاء المشروع.", "عمليات تحديد ومراقبة ما يجب تضمينه وما لا يجب تضمينه في المشروع.", "منتج أو خدمة يتم إنشاؤه كجزء من المشروع ويكون قابلاً للتسليم.", "التكلفة التقديرية الإجمالية للمشروع عند الإغلاق."], correctIndex: 2, note: null },
+        { section: 4, text: `في أي نوع من دورات حياة المشروع يتم " تحديد النطاق في وقت مبكر، ولكن يتم تعديل تقديرات الوقت والتكلفة بشكل متكرر مع زيادة فهم المنتج" ؟`, options: ["دورة الحياة التكرارية iterative life cycle", "دورة الحياة التزايدية incremental life cycle", "دورة الحياة التكيفية Adaptive life cycle", "دورة الحياة التنبؤية Predictive life cycle"], correctIndex: 0, note: null },
+        { section: 4, text: `هي دورة حياة يتم فيها إنتاج المخرجات من خلال سلسلة من التكرارات التي تضيف وظائف ضمن إطار زمني محدد، ولا يكتمل التسليم إلا بعد التكرار النهائي.`, options: ["دورة الحياة التكرارية iterative life cycle", "دورة الحياة التزايدية incremental life cycle", "دورة الحياة التكيفية Adaptive life cycle", "دورة الحياة التنبؤية Predictive life cycle"], correctIndex: 1, note: null },
+        { section: 4, text: `في دورة الحياة التزايدية، يكتمل التسليم النهائي للمخرج ويصبح جاهزاً بعد التكرار الأول مباشرة.`, options: ["صح", "خطأ"], correctIndex: 1, note: null },
+        { section: 4, text: `تتميز دورة الحياة التزايدية بـ ؟`, options: ["درجة تغيير عالية وتواتر منخفض للتسليم.", "درجة تغيير عالية ووتيرة تسليم مرتفعة.", "درجة تغيير منخفضة وتواتر منخفض للتسليم.", "درجة تغيير منخفضة ووتيرة تسليم مرتفعة."], correctIndex: 3, note: null },
+        { section: 4, text: `في أي نوع من دورات الحياة يقوم أصحاب المصلحة بتحديد النطاق التفصيلي والموافقة عليه قبل بدء التكرار، مما ينتج عنه منتج قابل للاستخدام في نهاية كل تكرار، وتكون رشيقة أو مدفوعة بالتغيير؟`, options: ["دورة الحياة الهجينة Hybrid life cycle", "دورة الحياة التنبؤية Predictive life cycle", "دورة الحياة التكيفية Adaptive life cycle", "دورة الحياة التكرارية iterative life cycle"], correctIndex: 2, note: null },
+        { section: 4, text: `تعرف دورة الحياة التكيفية (adaptive life cycle) بأنها رشيقة أو مدفوعة بالتغير، وتتميز بـ؟`, options: ["درجة منخفضة من التغيير ووتيرة منخفضة للتسليم.", "درجة عالية من التغيير ووتيرة عالية للتسليم.", "درجة منخفضة من التغيير ووتيرة عالية للتسليم.", "درجة عالية من التغيير ووتيرة منخفضة للتسليم."], correctIndex: 1, note: null },
+        { section: 4, text: `ما هي دورة الحياة التي يتم فيها استخدام مجموعة من الأساليب بناءً على طبيعة العمل، بحيث قد يكون لبعض المخرجات درجة منخفضة من التغيير ووتيرة منخفضة للتسليم، ولبعضها الآخر درجة عالية من التغيير ووتيرة مرتفعة للتسليم؟`, options: ["دورة الحياة الهجينة Hybrid life cycle", "دورة الحياة التنبؤية Predictive life cycle", "دورة الحياة التكيفية Adaptive life cycle", "دورة الحياة التكرارية iterative life cycle"], correctIndex: 0, note: null },
+        { section: 4, text: `دورة حياة الشلال تستخدم في تطوير نماذج أولية للبرمجيات لتوضيح متطلبات المستخدم التشغيلية. وتستخدم أيضاً في الأنظمة التي تتضمن قدراً كبيراً من تصميم واجهة المستخدم بالتكلفة أو تأخير مقبول.`, options: ["صح", "خطأ"], correctIndex: 1, note: "تصحيح دورة حياة النماذج الأولية." },
+        { section: 4, text: `دورة حياة النماذج الأولية: يعتبر منطقياً لمشاريع تكنلوجيا المعلومات التي لا تتضمن تطوير برمجيات.`, options: ["صح", "خطأ"], correctIndex: 1, note: "تصحيح دورة حياة الشلال." },
+        { section: 4, text: `المنهجية PMBOK: هي معلومات موجزة تصف اعتبارات البيئة وأفضل الممارسات لما يجب القيام به لإدارة المشاريع.`, options: ["صح", "خطأ"], correctIndex: 0, note: null },
+        { section: 4, text: `يوجد في إدارة المشاريع 49 عملية حسب منهج PMBOK`, options: ["صح", "خطأ"], correctIndex: 0, note: null },
+        { section: 4, text: `يمكن القول أن العولمة أوجدت عالمًا "ساحة اللعب" متساوية للعديد من المشاركين.`, options: ["صح", "خطأ"], correctIndex: 0, note: null },
+        { section: 4, text: `هو نموذج مطور بناءً على تحسينات نموذج الشلال المطبق على المشاريع البرمجية الحكومية الكبيرة، حيث يتم فيه تطوير البرمجيات باستخدام نهج تكراري أو حلزوني بدلاً من النهج الخطي. وفي هذا النموذج، يكون فريق المشروع منفتحاً على التغييرات والمراجعات في وقت لاحق من دورة حياة المشروع، مع العودة إلى مرحلة المتطلبات لتوضيح هذه المراجعات وتصميمها بعناية أكبر؛ مما يجعله نموذجاً مناسباً للمشاريع التي يمكن إدخل التغييرات إليها مع زيادات معقولة في التكلفة أو مع تأخيرات زمنية مقبولة.`, options: ["دورة الحياة الحلزونية", "دورة الحياة التنبؤية", "دورة الحياة الهجينة", "دورة الحياة التكيفية"], correctIndex: 0, note: null },
+        { section: 4, text: `ما هي الاستعانة بمصادر خارجية؟`, options: ["اقتناء المنظمة للسلع والخدمات من مصدر خارجي", "تحويل مسؤولية تقديم الخدمات إلى جهة خارجية مع الاحتفاظ بالرقابة الإستراتيجية", "نقل ملكية العمليات الداخلية إلى شركة خارجية بشكل دائم"], correctIndex: 0, note: null },
+        { section: 4, text: `الفرق بين أعضاء فريق المشروع وفريق إدارة المشروع:`, options: ["لا يوجد فرق بينهما، كلاهما يقوم بنفس المهام", "أعضاء الفريق يديرون المشروع، فريق الإدارة ينفذ المهام التقنية", "أعضاء الفريق يقوموا بتنفيذ المهام، فريق الإدارة يساعد بإدارة المشروع الكبير", "أعضاء الفريق يضعون الخطط فقط، فريق الإدارة يتواصل مع أصحاب المصلحة فقط"], correctIndex: 2, note: null },
+        { section: 4, text: `مناسباً للمشاريع التي يمكن إدخال التغييرات إليها مع زيادات معقولة في التكلفة أو مع تأخيرات زمنية مقبولة.`, options: ["دورة الحياة الحلزونية", "دورة الحياة الهجينة", "دورة الحياة التكيفية"], correctIndex: 0, note: null },
+        { section: 4, text: `من القضايا الرئيسية عند العمل في مشاريع عالمية:`, options: ["التمويل المباشر - توافر الأجهزة - عدد ساعات العمل اليومية", "القرب الجغرافي - تشابه القوانين المحلية - استخدام نفس نوع الحاسب", "الاتصالات - الثقة - ممارسات العمل المشتركة", "تقليص حجم البرمجيات - إلغاء المراجعات - الاعتماد على نموذج الشلال فقط"], correctIndex: 2, note: null },
+        { section: 4, text: `متى تنتهي دورة حياة المنتج؟`, options: ["عند تسليم المنتج للعميل", "عند انتهاء المشروع", "عند انتهاء فترة الضمان", "عند سحب المنتج من الخدمة التقاعد / Retirement"], correctIndex: 3, note: null },
+        { section: 4, text: `دورة حياة المشروع تمثل _______ ضمن دورة حياة المنتج:`, options: ["مرحلة واحدة أو أكثر من مراحل دورة حياة المنتج", "دورة حياة المنتج بالكامل", "مرحلة الصيانة فقط", "مرحلة التقاعد فقط"], correctIndex: 0, note: null },
+        { section: 4, text: `مشروع تطوير تطبيق جوال، ثم مشروع تحديثه، ثم مشروع إيقافه، كل هذه المشاريع تقع ضمن`, options: ["دورة حياة مشروع واحد", "دورة حياة المنتج (التطبيق)", "إدارة البرامج", "إدارة المحافظ"], correctIndex: 1, note: null },
+        { section: 4, text: `إلى ماذا يرمز هذا الاختصار SDLC :`, options: ["دورة حياة تطوير النظم Systems Development Life Cycle", "التحكم المنطقي بتصميم البرمجيات Software Design Logic Control", "دورة القيادة التطويرية الاستراتيجية Strategic Development Leadership Cycle", "تهيئة دورة حياة بيانات النظام System Data Lifecycle Configuration"], correctIndex: 0, note: null },
+
+        // ======================= CH5 =======================
+        { section: 5, text: `تشمل . تعريف المشروع أو تعريف مرحلة ضمن المشروع والتصريح بها. تحدث عمليات البدء خلال كل مرحلة من مراحل المشروع.`, options: ["عمليات البدء", "عمليات التخطيط", "عمليات التنفيذ", "عمليات الإغلاق"], correctIndex: 0, note: null },
+        { section: 5, text: `تشمل . وضع خطط المشروع والحفاظ عليها لضمان أن المشروع يلبي احتياجات المنظمة.`, options: ["عمليات البدء", "عمليات التخطيط", "عمليات التنفيذ", "عمليات الإغلاق"], correctIndex: 1, note: null },
+        { section: 5, text: `تشمل . التنسيق بين الأفراد والموارد الأخرى لتنفيذ الخطط المختلفة وإنشاء المنتجات أو الخدمات أو نتائج المشروع أو المرحلة.`, options: ["عمليات البدء", "عمليات التخطيط", "عمليات التنفيذ", "عمليات الإغلاق"], correctIndex: 2, note: null },
+        { section: 5, text: `تشمل . إضفاء الطابع الرسمي على قبول المشروع أو قبول مرحلة ضمن المشروع وإنهائه أو إنهائه بكفاءة. وغالباً ما يتم تضمين الأنشطة الإدارية في مجموعة العمليات هذه، مثل أرشفة ملفات المشروع وتوثيق الدروس المستفادة، والحصول على قبول رسمي بالأعمال المنجزة كجزء من المرحلة أو المشروع.`, options: ["عمليات البدء", "عمليات التخطيط", "عمليات التنفيذ", "عمليات الإغلاق"], correctIndex: 3, note: null },
+        { section: 5, text: `ما هي منهجية التطوير التي تكون على شكل عملية تكرارية لتطوير البرمجيات وتركز على إنتاجية الفريق وتمكن جميع أعضاء الفريق من تقديم أفضل الممارسات البرمجية للمنظمة. وهي تجسد أساليب وتقنيات إدارية وتقنية متوافقة مع معايير الصناعة لتوفير عملية هندسة برمجيات مناسبة بشكل خاص لإنشاء حلول نظام برمجيات قائمة على المكونات وصيانتها؟`, options: ["Rational Unified Process", "Agile methods", "PRINCE2", "Six Sigma"], correctIndex: 0, note: null },
+        { section: 5, text: `إدارة المشروع: هي مسعى تكاملي، إذ تؤثر القرارات والإجراءات المتخذة في أحد المجالات المعرفية في وقت معين على المجالات المعرفية الأخرى.`, options: ["صح", "خطأ"], correctIndex: 0, note: null },
+        { section: 5, text: `أي مما يلي من عمليات التخطيط:`, options: ["وضع خطط المشروع و الحفاظ عليها لضمان مشروع يلبي الاحتياجات، مثل: خطة إدارة النطاق والجدول الزمني والتكلفة والمشتريات.", "تحدد خطط كل مجال معرفي من حيث صلته بالمشروع، مثل تحديد العمل المطلوب و الموارد اللازمة لإنجاز العمل و جدولة الأنشطة المتعلقة بالعمل و تقدير تكاليفه.", "مراجعة الخطط خلال كل مرحلة من مراحل دورة حياة المشروع", "جميع ما سبق صحيح"], correctIndex: 3, note: null },
+        { section: 5, text: `هي منهجية عامة لإدارة المشاريع وطورت لمشاريع تكنلوجيا المعلومات.`, options: ["منهجية PRINCE2", "الطرق الرشيقة", "منهجية Rational Unified Process (RUP)", "منهجية Six Sigma"], correctIndex: 0, note: `توضيح ممكن يجي تعاريف لباقي المصطلحات:\nالطرق الرشيقة تستخدم دورة حياة منتج تكيفية، وتكون النواتج ذات درجة عالية من التغير ، ووتيرة تسليم عالية.\nمنهجية RUP هي عملية تكرارية لتطوير البرمجيات.\nمنهجية Six Sigma هي منهجية طورها خبراء جودة المشاريع وتستخدم (التعريف والقياس والتحليل والتحسين والتحكم DMAIC / التعريف والقياس والتحليل التصميم والتحقق DMADV).` },
+        { section: 5, text: `في هذه العملية تدرك المنظمة وجود مشروع جديد وتقوم بإكمال ميثاق المشروع كجزء من هذا الاعتراف.`, options: ["عمليات البدء", "عمليات التخطيط", "عمليات التنفيذ", "عمليات الإغلاق"], correctIndex: 0, note: null },
+        { section: 5, text: `تتضمن المشاريع العديد من الخطط مثل خطة إدارة النطاق وخطة إدارة الجدول الزمني.`, options: ["عمليات البدء", "عمليات التخطيط", "عمليات التنفيذ", "عمليات الإغلاق"], correctIndex: 1, note: null },
+        { section: 5, text: `أي مما يلي ليس صحيح عن عمليات إدارة المشروع:`, options: ["مهام البدء والإغلاق هي الأقصر", "عمليات التنفيذ يتطلب عموماً معظم الموارد", "مجموعات العمليات ليست متنافية", "قضاء المزيد من الوقت في التخطيط يؤدي إلى زيادة الوقت المستغرق في التنفيذ"], correctIndex: 3, note: null },
+
+        // ======================= CH6 =======================
+        { section: 6, text: `تضمن . تنسيق جميع المجالات المعرفية الأخرى لإدارة المشروع طوال دورة حياة المشروع. وهذا يضمن أن جميع عناصر المشروع تجتمع معًا في الأوقات المناسبة لإكمال المشروع بنجاح.`, options: ["إدارة الجدول الزمني في المشروع", "إدارة نطاق المشروع", "إدارة تكلفة المشروع", "إدارة تكامل المشروع"], correctIndex: 3, note: null },
+        { section: 6, text: `هي تقنية تستخدم الفروع التي تشع من فكرة أساسية لهيكلة الأفكار. فدماغ الإنسان لا يعمل بطريقة خطية ويأتي الناس بالعديد من الأفكار غير المترابطة. ومن خلال التقاط هذه الأفكار بهذه تقنية يمكننا غالباً توليد أفكار أكثر فيما لو أنشأنا قوائم خطية للأفكار.`, options: ["الخرائط الذهنية mind mapping", "SWOT", "TQM", "شجرة القرار"], correctIndex: 0, note: null },
+        { section: 6, text: `يتم تعريف . لسلسلة زمنية من التدفقات النقدية، الواردة والصادرة على أنها مجموع القيم الحالية لكل عنصر من عناصر السلسلة.`, options: ["القيمة الحالية الصافية", "العائد على الاستثمار", "زمن الاسترداد", "جميع الخيارات"], correctIndex: 0, note: null },
+        { section: 6, text: `يتم حساب . بطرح قيمة التكاليف من الفوائد ثم تقسيم النتيجة على التكاليف.`, options: ["معدل الفائدة", "العائد على الاستثمار", "هامش الربح", "القيمة الحالية الصافية"], correctIndex: 1, note: null },
+        { section: 6, text: `إن( . ) هي أداة قرار يستخدمها صناع القرار، تقدم على أحد المحاور قائمة بالبدائل، وتسمى أيضاً الخيارات أو الحلول، والتي يتم تقييمها على المحور الآخر، بقائمة من المعايير التي يتم ترجيحها اعتماداً على أهميتها النسبية في القرار النهائي.`, options: ["مصفوفة القرار الأساسية", "اتخاذ القرار", "نموذج التقييم المرجح", "شجرة القرار"], correctIndex: 2, note: null },
+        { section: 6, text: `ما هو التخطيط الاستراتيجي ؟`, options: ["توثيق مفصل لكل مرحلة من مراحل المشروع", "إعداد الجدول الزمني اليومي للمشروع", "تحديد الأهداف طويلة الأجل في المنظمة", "توزيع المهام على أعضاء الفريق"], correctIndex: 2, note: null },
+        { section: 6, text: `ما هي فائدة التخطيط الاستراتيجي ؟`, options: ["منع توظيف موظفين جدد في المنظمة", "إلغاء الحاجة لإدارة المشاريع بالكامل", "تحديد الرواتب الشهرية والسنوية للموظفين", "يوفر معلومات مهمة لمساعدة المنظمات على تحديد المشاريع المحتملة ثم اختيارها"], correctIndex: 3, note: null },
+        { section: 6, text: `ميثاق المشروع هو وثيقة تعترف رسميا بوجود المشروع و توفر التوجه بشأن أهداف المشروع و إدارته.`, options: ["صح", "خطأ"], correctIndex: 0, note: null },
+        { section: 6, text: `تدرس إحدى المنظمات فرصة استثمارية للمفاضلة بين مشروعين مستقلين مالياً. إذا علمت أن نسبة الفائدة المخفضة المعطاة من المصرف هي 11%، وكانت أرباح القيمة الصافية الحالية (NPV) للمشروعين كالتالي المشروع الأول: 3000 ، المشروع الثاني : 2000 سالب (-2000)`, options: ["يرفض المشروعين معاً.", "يقبل المشروعين معاً.", "يقبل المشروع الأول ويرفض الثاني.", "يقبل المشروع الثاني ويرفض الأول."], correctIndex: 2, note: `توضيح: سبب قبول المشروع الأول الربح موجب : 0 < NPV ، وسبب رفض المشروع الثاني الربح سالب : 0 > NPV` },
+        { section: 6, text: `تدرس إحدى المنظمات فرصة استثمارية للمفاضلة بين مشروعين مستقلين مالياً، حيث تفرض القيود المتاحة اختيار مشروع واحد فقط من بينهما. إذا علمت أن نسبة الفائدة المخفضة المعطاة من المصرف هي 11%، وكانت أرباح القيمة الصافية الحالية (NPV) للمشروعين كالتالي: المشروع الأول: 400000 - المشروع الثاني: 700000`, options: ["يرفض المشروعين معاً.", "يقبل المشروعين معاً.", "يقبل المشروع الأول ويرفض الثاني.", "يقبل المشروع الثاني ويرفض الأول."], correctIndex: 3, note: `توضيح: سبب قبول المشروع الثاني فقط، لأن بنص المسألة مذكر اختيار مشروع واحد فقط" لذا نختار المشروع ذو الربح الأعلى.` },
+        { section: 6, text: `طرق إجراء التحليلات المالية:`, options: ["تحليل SWOT مخطط غانت، تحليل المخاطر", "تحليل أصحاب المصلحة، تحليل السوق، تحليل التكلفة المباشرة", "القيمة الحالية الصافية، العائد على الاستثمار، تحليل فترة الاسترداد", "نموذج التقييم المرجح، تحليل شجرة القرار، مخطط الشبكة"], correctIndex: 2, note: null },
+        { section: 6, text: `تحديد مقدار الوقت المستغرق لاستراد الاستثمارات الأولية. التعريف السابق هو تعريف:`, options: ["العائد على الاستثمار", "فترة الاسترداد"], correctIndex: 1, note: null },
+
+        // ======================= CH7 =======================
+        { section: 7, text: `هي وثيقة تستخدم لتنسيق جميع مستندات تخطيط المشروع والمساعدة في توجيه تنفيذ المشروع والتحكم فيه.`, options: ["ميثاق المشروع", "نطاق المشروع", "خطة إدارة المشروع", "الجدول الزمني للمشروع"], correctIndex: 2, note: null },
+        { section: 7, text: `ما هو الخيار الذي لا يُعتبر من أدوات وتقنيات تنفيذ المشروع؟`, options: ["حكم الخبراء", "تحليل القيمة المكتسبة", "الاجتماعات", "نظام معلومات إدارة المشروع"], correctIndex: 1, note: null },
+        { section: 7, text: `يوثق . التحديات والمشكلات والمخاطر والفرص المحققة والمحتويات الأخرى للمساعدة في إدارة المعرفة في المشاريع الحالية والمستقبلية.`, options: ["سجل الدروس المستفادة", "سجل المخاطر", "نظام معلومات إدارة المشروع", "ملف المشروع"], correctIndex: 0, note: null },
+        { section: 7, text: `ما هو الخيار الذي لا يُعتبر من أهداف التحكم المتكامل في التغيير ؟`, options: ["التأثير على العوامل التي تؤدي إلى حدوث تغييرات لضمان أن التغييرات مفيدة", "تحديد حدوث تغيير", "إدارة التغييرات الفعلية عند حدوثها", "منع حدوث تغيير"], correctIndex: 3, note: null },
+        { section: 7, text: `تضمن أن تكون أوصاف منتجات المشروع صحيحة وكاملة. وهي تشمل تحديد خصائص التصميم الوظيفية والمادية للمنتجات والتحكم فيها ووثائق دعمها.`, options: ["إدارة التكوين (Configuration Management)", "إدارة الجودة (Quality Management)", "إدارة المعرفة (Knowledge Management)", "إدارة التغيير (Change Management)"], correctIndex: 0, note: null },
+        { section: 7, text: `خط الأساس: هو نقطة بداية أو قياس أو ملاحظة موثقة بحيث يمكن استخدامها للمقارنة المستقبلية.`, options: ["صح", "خطأ"], correctIndex: 0, note: null },
+        { section: 7, text: `المعرفة الضمنية هي المعرفة التي يمكن شرحها بسهولة باستخدام الكلمات أو الصور أو الأرقام، وتتميز بأنها سهلة التواصل والتخزين والتوزيع، مثل المعلومات الموجودة في الكتب المدرسية والموسوعات ووثائق المشروع وخططه.`, options: ["صح", "خطأ"], correctIndex: 1, note: `تصحيح: التعريف السابق هو تعريف المعرفة الصريحة. أما المعرفة الضمنية فهي تسمى المعرفة غير الرسمية، ويصعب التعبير عنها وهي شخصية، مثل المعتقدات والبصيرة والخبرة، ويتم مشاركتها من خلال المحادثات والتفاعلات بين الناس.` },
+        { section: 7, text: `ما هو تعريف التحكم المتكامل في التغيير ؟`, options: ["هي عملية رسمية موثقة تصف متى وكيف يمكن التغيير لوثائق المشروع الرسمية.", "هو مجموعة رسمية من الأشخاص المسؤولين عن الموافقة على التغييرات في المشروع أو رفضها.", "هو تحديد التغييرات وتقييمها وإدارتها طوال فترة حياة المشروع.", "هي العملية الأخيرة في إدارة تكامل المشروع"], correctIndex: 2, note: `توضيح ممكن يجي تعاريف لباقي المصطلحات:\nA نظام التحكم في التغيير.\nB مجلس التحكم في التغيير.\nD إغلاق المشاريع أو المراحل.` },
+
+        // ======================= CH8 =======================
+        { section: 8, text: `تشمل عمليات تحديد ومراقبة ما يجب تضمينه من أعمال لازمة لإنجاز المشروع وما لا يجب تضمينه. وهي تضمن أن يكون لدى فريق المشروع وأصحاب المصلحة نفس الفهم للمنتجات التي سينتجها المشروع والعمليات التي سيستخدمها فريق لإنتاجها.`, options: ["إدارة تكلفة المشروع", "إدارة نطاق المشروع", "إدارة التكامل في المشروع", "إدارة الجدول الزمني للمشروع"], correctIndex: 1, note: null },
+        { section: 8, text: `تقوم . على توليد الأفكار من خلال مقارنة ممارسات المشروع أو خصائص المنتج تلك الخاصة بالمشاريع أو المنتجات الأخرى داخل أو خارج المنظمة المنفذة.`, options: ["تقنية حكم الخبراء", "تحليل القيمة المكتسبة", "تقنية العصف الذهني", "المقارنة المعيارية benchmarking"], correctIndex: 3, note: null },
+        { section: 8, text: `يجب أن يتضمن . وصفاً لنطاق المنتج، ومعايير قبول المنتج من قبل المستخدمين، ومعلومات مفصلة عن جميع مخرجات المشروع، وحدود المشروع والقيود والافتراضات.`, options: ["هيكل تقسيم العمل (WBS)", "ميثاق المشروع project charter", "بيان نطاق المشروع project scope statement", "خطة المشروع project plan"], correctIndex: 2, note: null },
+        { section: 8, text: `هو عبارة عن تجميع موجه بنواتج العمل المتضمن في المشروع ويحدد نطاقه الإجمالي. ويسمح بتنظيم العمل وتقسيمه إلى أجزاء منطقية بناءً على كيفية تنفيذ العمل، ويوفر الأساس لتخطيط وإدارة الجدول الزمني للمشروع والتكاليف والموارد والتغييرات.`, options: ["هيكل تقسيم العمل (WBS)", "ميثاق المشروع project charter", "بيان نطاق المشروع project scope statement", "خطة المشروع project plan"], correctIndex: 0, note: null },
+        { section: 8, text: `ما هو الخيار الذي لا يُعتبر من مناهج تطوير هياكل تقسيم العمل؟`, options: ["استخدام الإرشادات", "نهج القياس", "النهج التنازلي من أعلى إلى أسفل", "النهج الرشيق"], correctIndex: 3, note: null },
+        { section: 8, text: `ما هو المفهوم الذي يشير إلى جميع الأعمال اللازمة لإنشاء نواتج المشروع والعمليات المستخدمة لإنشائها؟`, options: ["خطة إدارة التكلفة", "التحكم في التكلفة", "الناتج أو المخرج (deliverable)", "النطاق (scope)"], correctIndex: 3, note: null },
+        { section: 8, text: `أي مما يلي يعبر عن مفهوم الناتج أو المخرج (deliverable) ؟`, options: ["جميع الأعمال والعمليات المستخدمة لإنشاء المشروع.", "عمليات تحديد ومراقبة ما يجب تضمينه وما لا يجب تضمينه في المشروع.", "منتج أو خدمة يتم إنشاؤه كجزء من المشروع ويكون قابلاً للتسليم.", "التكلفة التقديرية الإجمالية للمشروع عند الإغلاق."], correctIndex: 2, note: null },
+        { section: 8, text: `مفهوم الناتج أو المخرج (deliverable) يمكن أن يكون النواتج أو المخرجات المرتبطة بالمنتج، مثل قطعة من الأجهزة أو البرمجيات، أو عملية ذات صلة مثل وثيقة التخطيط أو محاضر الاجتماعات.`, options: ["صح", "خطأ"], correctIndex: 0, note: null },
+        { section: 8, text: `حزمة العمل: هي تمثيل لمستوى العمل الذي يراقبه المدير و يتحكم فيه، وهي مهمة في أدنى مستوى من هيكل تقسيم العمل (WBS) ، وتعتبر أساساً للمساءلة وإعداد التقارير.`, options: ["صح", "خطأ"], correctIndex: 0, note: null },
+        { section: 8, text: `ليس من مدخلات مراقبة عمل المشروع والتحكم فيه`, options: ["خطة إدارة المشروع", "وثائق المشروع", "المعلومات المتعلقة بالأداء", "الدروس والعبر المستفادة"], correctIndex: 3, note: null },
+        { section: 8, text: `جمع المتطلبات: يتضمن مراجعة خطة إدارة النطاق، وميثاق المشروع، ووثائق المتطلبات، وإضافة المزيد من المعلومات عند تحديد المتطلبات والموافقة على طلبات التغيير.`, options: ["صح", "خطأ"], correctIndex: 1, note: null },
+        { section: 8, text: `الأداة أو التقنية الرئيسية في هيكل تقسيم العمل WBS هي: التحلل .`, options: ["صح", "خطأ"], correctIndex: 0, note: null },
+        { section: 8, text: `من طرق توثيق المتطلبات هي مصفوفة تتبع المتطلبات عن طريق جدول يسرد المتطلبات وسماتها المختلفة وحالة المتطلبات لضمان تناولها جميعاً.`, options: ["صح", "خطأ"], correctIndex: 0, note: null },
+
+        // ======================= CH9 =======================
+        { section: 9, text: `تتضمن العمليات المطلوبة لضمان إنجاز المشروع في الوقت المناسب.`, options: ["إدارة تكلفة المشروع", "إدارة نطاق المشروع", "إدارة التكامل في المشروع", "إدارة الجدول الزمني للمشروع"], correctIndex: 3, note: null },
+        { section: 9, text: `هو حدث مهم في المشروع وليس له مدة في العادة. غالباً ما يتطلب الأمر عدة أنشطة والكثير من العمل لإكماله، وهو يساعد في تحديد الأنشطة الضرورية.`, options: ["المعلم الرئيسي milestone", "النشاط activity", "ميثاق المشروع project charter", "حدث المخاطرة risk event"], correctIndex: 0, note: null },
+        { section: 9, text: `ما معنى علاقة Finish-to-Start ؟`, options: ["يستطيع النشاط الأول أن ينتهي عندما يبدأ النشاط الثاني", "يستطيع النشاط الأول أن يبدأ عندما ينتهي النشاط الثاني", "يجب أن ينتهي النشاط الأول حتى يستطيع النشاط الثاني أن يبدأ", "يجب أن يبدأ النشاط الأول حتى يستطيع النشاط الثاني أن ينتهي"], correctIndex: 2, note: null },
+        { section: 9, text: `ما هو الفرق بين مفهومي التخلف Lag والقيادة Lead ؟.`, options: ["التخلف هو تأخير زمني بين نشاطين بينما القيادة هي تسبيق زمني بينهما", "التخلف هو تسبيق زمني بين نشاطين بينما القيادة هي تأخير زمني بينهما", "التخلف هو فترة مرونة إضافية بينما القيادة هي قيد إضافي", "التخلف هو قيد إضافي بينما القيادة هي فترة مرونة إضافية"], correctIndex: 0, note: null },
+        { section: 9, text: `ما هو الفرق بين مخططي AON و AOA ؟`, options: ["الأول تأكيدي والثاني احتمالي", "الأول سهل الاستخدام والثاني صعب الاستخدام", "مكان تموضع الأنشطة على الأسهم أم في العقد", "الأول مناسب للمشاريع التنظيمية بينما الثاني أنسب للمشاريع الهندسية"], correctIndex: 2, note: null },
+        { section: 9, text: `تحديد السياسات والإجراءات والوثائق التي سيتم استخدامها لتخطيط وتنفيذ ومراقبة الجدول الزمني للمشروع.`, options: ["إدارة الجدول الزمني للمشروع", "تخطيط إدارة الجدول الزمني", "تطوير الجدول الزمني", "التحكم في الجدول الزمني"], correctIndex: 1, note: `توضيح ممكن يجي تعاريف لباقي المصطلحات:\nA إدارة الجدول الزمني للمشروع العمليات المطلوبة لإنجاز المشروع في الوقت المناسب.\nC تطوير الجدول الزمني: تحليل لتسلسل الأنشطة ومتطلبات الموارد وتقديرات ومدة الأنشطة لإنشاء الجدول الزمني.\nD التحكم في الجدول الزمني مراقبة وإدارة التغييرات في الجدول الزمني للمشروع.` },
+        { section: 9, text: `هو تحديد وتوثيق العلاقات بين أنشطة المشروع بهدف رسم المخطط الشبكي للمشروع.`, options: ["النشاط", "تسلسل الأنشطة", "تقدير مدة النشاط"], correctIndex: 1, note: `توضيح ممكن يجي تعاريف لباقي المصطلحات:\nA النشاط هو عنصر من عناصر العمل في هيكل تنظيم العمل (WBS) وله مدة وتكلفة ومتطلبات من الموارد.\nC تقدير مدة النشاط تقدير عدد فترات العمل اللازمة لإكمال الأنشطة الفردية.` },
+        { section: 9, text: `تكون متأصلة في طبيعة العمل الذي يتم تنفيذه في المشروع، المنطق الثابت.`, options: ["التبعيات الإلزامية", "التبعيات التقديرية", "التبعيات الخارجية", "التبعيات الداخلية"], correctIndex: 0, note: `توضيح ممكن يجي تعاريف لباقي المصطلحات:\nB التبعيات التقديرية تحدد من قبل فريق العمل المنطق الثابت.\nC التبعيات الخارجية علاقات بين أنشطة المشروع و أنشطة خارجية عنه.\nD التبعيات الداخلية: أنشطة مشروعية تكون تحت سيطرة فريق المشروع.` },
+        { section: 9, text: `كم مدة مهمة نقطة العلام؟`, options: ["0", "يوم واحد", "مساوية لمتوسط مدة الأنشطة السابقة", "تعتمد على حجم الموارد المتاحة"], correctIndex: 0, note: `ملاحظة: المدة 0 لأنها تعبر عن حدث، أي أن العلام ليس له مدة.` },
+        { section: 9, text: `المخطط الشبكي هو عرض تخطيطي للعلاقات المنطقية بين أنشطة المشروع و تسلسلها، ويسمح بالتعبير بشكل مرئي عن منطق خطة المشروع من خلال إظهار علاقات التبعية بين الأنشطة.`, options: ["صح", "خطأ"], correctIndex: 0, note: null },
+        { section: 9, text: `استخدام التأخير Lag في علاقة النهاية - البداية Finish-to-Start تعني تأخير بدء النشاط اللاحق.`, options: ["صح", "خطأ"], correctIndex: 0, note: null },
+        { section: 9, text: `إذا كانت العلاقة بداية - بداية SS ومدة المشروع الأول 5 والثاني 2 ، فكم مدة المشروع الإجمالية؟`, options: ["2", "3", "4", "5"], correctIndex: 3, note: null },
+        { section: 9, text: `إذا كانت العلاقة نهاية - نهاية FF ومدة المشروع الأول 5 والثاني 2 ، فكم مدة المشروع الإجمالية؟`, options: ["2", "3", "4", "5"], correctIndex: 3, note: null },
+        { section: 9, text: `إذا كانت العلاقة نهاية - بداية FS ومدة المشروع الأول 5 والثاني 2 ، فكم مدة المشروع الإجمالية؟`, options: ["3", "5", "7", "9"], correctIndex: 2, note: null },
+        { section: 9, text: `إذا كانت العلاقة بداية - نهاية SF ومدة المشروع الأول 5 والثاني 2 ، فكم مدة المشروع الإجمالية؟`, options: ["3", "5", "7", "9"], correctIndex: 2, note: null },
+        { section: 9, text: `إذا كانت العلاقة نهاية - بداية FS إنجاز المهمتين هو المجموع وإذ كانت مدة المهمة الأولى 5 والثانية 3 أيام. كم عدد أيام المشروع؟ وفي حال وجود تأخير زمني lag مدته يومان وتسبق زمني lead مدته يومان ، ما هي الإجابات الصحيحة؟`, options: ["عدد أيام المشروع 8 ، مع تأخير 6، مع تسبيق 10", "عدد أيام المشروع 8 ، مع تأخير 10، مع تسبيق 6", "عدد أيام المشروع 5 ، مع تأخير 7، مع تسبيق 3", "عدد أيام المشروع 10 ، مع تأخير 12، مع تسبيق 8"], correctIndex: 1, note: null },
+        { section: 9, text: `إذا علمت أن هناك علاقة زمنية بين نشاطين متتاليين من مشروع ما، وكانت المعطيات الخاصة بهما كالتالي: نوع العلاقة الزمنية النهاية - البداية (Finish-to-Start (FS. مدة النشاط: 10 أيام، مدة النشاط: 8 أيام، فترة التأخير الزمنية (Lag) 3 أيام. ما هي المدة الزمنية الإجمالية الصغرى اللازمة لإنهاء هذين النشاطين معاً في المشروع؟`, options: ["11", "15", "18", "21"], correctIndex: 3, note: null },
+        { section: 9, text: `إذا علمت أن هناك علاقة زمنية بين نشاطين متتاليين من مشروع ما، وكانت المعطيات الخاصة بهما كالتالي: نوع العلاقة الزمنية: النهاية - البداية (Finish-to-Start (FS. مدة النشاط 10 أيام، مدة النشاط: 8 أيام، فترة التسبيق الزمنية (Lead) 3 أيام. ما هي المدة الزمنية الإجمالية الصغرى اللازمة لإنهاء هذين النشاطين معاً في المشروع؟`, options: ["11", "15", "18", "21"], correctIndex: 1, note: null },
+        { section: 9, text: `إذا علمت أن هناك علاقة زمنية بين نشاطين متتاليين من مشروع ما، وكانت المعطيات الخاصة بهما كالتالي: نوع العلاقة الزمنية النهاية - البداية (Finish-to-Start (FS. مدة النشاط: 6 أيام، مدة النشاط B: 4 أيام، فترة التأخير الزمنية (Lag): 2 أيام. ما هي المدة الزمنية الإجمالية الصغرى اللازمة لإنهاء هذين النشاطين معاً في المشروع؟`, options: ["8", "10", "12", "14"], correctIndex: 2, note: null },
+        { section: 9, text: `إذا علمت أن هناك علاقة زمنية بين نشاطين متتاليين من مشروع ما، وكانت المعطيات الخاصة بهما كالتالي: نوع العلاقة الزمنية: النهاية - البداية (Finish-to-Start (FS. مدة النشاط 5 أيام، مدة النشاط: 6 أيام، فترة التسبيق الزمنية (Lead) 2 أيام. ما هي المدة الزمنية الإجمالية الصغرى اللازمة لإنهاء هذين النشاطين معاً في المشروع؟`, options: ["9", "10", "11", "13"], correctIndex: 0, note: null },
+        { section: 9, text: `إذا علمت أن هناك علاقة زمنية بين نشاطين متتاليين من مشروع ما، وكانت المعطيات الخاصة بهما كالتالي: نوع العلاقة الزمنية: البداية - البداية (Start-to-Start (SS. مدة النشاط: 10 أيام، مدة النشاط: 8 أيام، فترة التأخير الزمنية (Lag) 3 أيام. ما هي المدة الزمنية الإجمالية الصغرى اللازمة لإنهاء هذين النشاطين معاً في المشروع؟`, options: ["11", "15", "18", "21"], correctIndex: 0, note: null },
+        { section: 9, text: `إذا علمت أن هناك علاقة زمنية بين نشاطين متتاليين من مشروع ما، وكانت المعطيات الخاصة بهما كالتالي: نوع العلاقة الزمنية: البداية - البداية (Start-to-Start (SS. مدة النشاط: 10 أيام، مدة النشاط: 8 أيام، فترة التسبيق الزمنية (Lead) 3 أيام. ما هي المدة الزمنية الإجمالية الصغرى اللازمة لإنهاء هذين النشاطين معاً في المشروع؟`, options: ["13", "15", "17", "19"], correctIndex: 0, note: null },
+        { section: 9, text: `إذا علمت أن هناك علاقة زمنية بين نشاطين متتاليين من مشروع ما، وكانت المعطيات الخاصة بهما كالتالي: نوع العلاقة الزمنية: البداية - البداية (Start-to-Start (SS. مدة النشاط 8 أيام، مدة النشاط: 10 أيام، فترة التسبيق الزمنية (Lead) 3 أيام. ما هي المدة الزمنية الإجمالية الصغرى اللازمة لإنهاء هذين النشاطين معاً في المشروع؟`, options: ["9", "11", "17", "19"], correctIndex: 1, note: null },
+        { section: 9, text: `إذا علمت أن هناك علاقة زمنية بين نشاطين متتاليين من مشروع ما، وكانت المعطيات الخاصة بهما كالتالي: نوع العلاقة الزمنية: البداية - البداية (Start-to-Start (SS. مدة النشاط 5 أيام، مدة النشاط B 9 أيام، فترة التسبيق الزمنية (Lead) 3 أيام. ما هي المدة الزمنية الإجمالية الصغرى اللازمة لإنهاء هذين النشاطين معاً في المشروع؟`, options: ["9", "11", "17", "19"], correctIndex: 0, note: null },
+        { section: 9, text: `إذا علمت أن هناك علاقة زمنية بين نشاطين متتاليين من مشروع ما، وكانت المعطيات الخاصة بهما كالتالي: نوع العلاقة الزمنية: البداية - البداية (Start-to-Start (SS. مدة النشاط 5 أيام، مدة النشاط B 9 أيام، فترة التأخير الزمنية (Lag): 3 أيام. ما هي المدة الزمنية الإجمالية الصغرى اللازمة لإنهاء هذين النشاطين معاً في المشروع؟`, options: ["9", "10", "11", "12"], correctIndex: 3, note: null },
+        { section: 9, text: `إذا علمت أن هناك علاقة زمنية بين نشاطين متتاليين من مشروع ما، وكانت المعطيات الخاصة بهما كالتالي: نوع العلاقة الزمنية: البداية - البداية (Start-to-Start (SS. مدة النشاط: 12 يوما. مدة النشاط: 8 أيام، فترة التسبيق الزمنية (Lead) 3 أيام. ما هي المدة الزمنية الإجمالية الصغرى اللازمة لإنهاء هذين النشاطين معاً في المشروع؟`, options: ["11", "12", "15", "17"], correctIndex: 2, note: null },
+        { section: 9, text: `إذا علمت أن هناك علاقة زمنية بين نشاطين متتاليين من مشروع ما، وكانت المعطيات الخاصة بهما كالتالي: نوع العلاقة الزمنية: البداية - البداية (Start-to-Start (SS. مدة النشاط: 10 أيام، مدة النشاط: 12 أيام، فترة التأخير الزمنية (Lag): 2 أيام. ما هي المدة الزمنية الإجمالية الصغرى اللازمة لإنهاء هذين النشاطين معاً في المشروع؟`, options: ["11", "12", "13", "14"], correctIndex: 3, note: null },
+        { section: 9, text: `إذا علمت أن هناك علاقة زمنية بين نشاطين متتاليين من مشروع ما، وكانت المعطيات الخاصة بهما كالتالي: نوع العلاقة الزمنية: البداية - البداية (Start-to-Start (SS. مدة النشاط: 12 يوما. مدة النشاط: 7 أيام، فترة التسبيق الزمنية (Lead): 4 أيام. ما هي المدة الزمنية الإجمالية الصغرى اللازمة لإنهاء هذين النشاطين معاً في المشروع؟`, options: ["12", "13", "15", "16"], correctIndex: 3, note: null },
+        { section: 9, text: `إذا علمت أن هناك علاقة زمنية بين نشاطين متتاليين من مشروع ما، وكانت المعطيات الخاصة بهما كالتالي: نوع العلاقة الزمنية النهاية - النهاية (Finish-to- Finish (FF. مدة النشاط 5 أيام، مدة النشاط B 9 أيام، فترة التأخير الزمنية (Lag) 3 أيام. ما هي المدة الزمنية الإجمالية الصغرى اللازمة لإنهاء هذين النشاطين معاً في المشروع؟`, options: ["9", "10", "11", "12"], correctIndex: 0, note: null },
+        { section: 9, text: `إذا علمت أن هناك علاقة زمنية بين نشاطين متتاليين من مشروع ما، وكانت المعطيات الخاصة بهما كالتالي: نوع العلاقة الزمنية النهاية - النهاية (Finish-to- Finish (FF. مدة النشاط 7 أيام، مدة النشاط B 5 أيام، فترة التأخير الزمنية (Lag): 3 أيام. ما هي المدة الزمنية الإجمالية الصغرى اللازمة لإنهاء هذين النشاطين معاً في المشروع؟`, options: ["9", "10", "11", "12"], correctIndex: 1, note: null },
+        { section: 9, text: `إذا علمت أن هناك علاقة زمنية بين نشاطين متتاليين من مشروع ما، وكانت المعطيات الخاصة بهما كالتالي: نوع العلاقة الزمنية النهاية - النهاية (Finish-to-Finish (FF. مدة النشاط 5 أيام، مدة النشاط B 9 أيام، فترة التسبيق الزمنية (Lead) 3 أيام. ما هي المدة الزمنية الإجمالية الصغرى اللازمة لإنهاء هذين النشاطين معاً في المشروع؟`, options: ["9", "10", "11", "12"], correctIndex: 3, note: null },
+        { section: 9, text: `إذا علمت أن هناك علاقة زمنية بين نشاطين متتاليين من مشروع ما، وكانت المعطيات الخاصة بهما كالتالي: نوع العلاقة الزمنية: النهاية - النهاية (Finish-to-Finish (FF. مدة النشاط 7 أيام، مدة النشاط B 5 أيام، فترة التسبيق الزمنية (Lead) 3 أيام. ما هي المدة الزمنية الإجمالية الصغرى اللازمة لإنهاء هذين النشاطين معاً في المشروع؟`, options: ["6", "7", "8", "9"], correctIndex: 2, note: null },
+        { section: 9, text: `إذا علمت أن هناك علاقة زمنية بين نشاطين متتاليين من مشروع ما، وكانت المعطيات الخاصة بهما كالتالي: نوع العلاقة الزمنية: النهاية - النهاية (Finish-to-Finish (FF. مدة النشاط 7 أيام، مدة النشاط B 4 أيام، فترة التسبيق الزمنية (Lead): 1 يوم. ما هي المدة الزمنية الإجمالية الصغرى اللازمة لإنهاء هذين النشاطين معاً في المشروع؟`, options: ["6", "7", "8", "9"], correctIndex: 1, note: null },
+        { section: 9, text: `إذا علمت أن هناك علاقة زمنية بين نشاطين متتاليين من مشروع ما، وكانت المعطيات الخاصة بهما كالتالي: نوع العلاقة الزمنية النهاية - النهاية (Finish-to-Finish (FF. مدة النشاط: 6 أيام، مدة النشاط: 10 أيام، فترة التأخير الزمنية (Lag): 2 أيام. ما هي المدة الزمنية الإجمالية الصغرى اللازمة لإنهاء هذين النشاطين معاً في المشروع؟`, options: ["8", "10", "12", "14"], correctIndex: 1, note: null },
+        { section: 9, text: `إذا علمت أن هناك علاقة زمنية بين نشاطين متتاليين من مشروع ما، وكانت المعطيات الخاصة بهما كالتالي: نوع العلاقة الزمنية البداية - النهاية (Start-to-Finish (SF. مدة النشاط 8 أيام، مدة النشاط: 5 أيام، فترة التأخير الزمنية (Lag): 2 أيام. ما هي المدة الزمنية الإجمالية الصغرى اللازمة لإنهاء هذين النشاطين معاً في المشروع؟`, options: ["11", "10", "14", "15"], correctIndex: 0, note: null },
+        { section: 9, text: `إذا علمت أن هناك علاقة زمنية بين نشاطين متتاليين من مشروع ما، وكانت المعطيات الخاصة بهما كالتالي: نوع العلاقة الزمنية: البداية - النهاية (Start-to-Finish (SF. مدة النشاط: 10 أيام، مدة النشاط: 6 أيام، فترة التأخير الزمنية (Lag): 4 أيام. ما هي المدة الزمنية الإجمالية الصغرى اللازمة لإنهاء هذين النشاطين معاً في المشروع؟`, options: ["10", "12", "16", "20"], correctIndex: 1, note: null },
+        { section: 9, text: `إذا علمت أن هناك علاقة زمنية بين نشاطين متتاليين من مشروع ما، وكانت المعطيات الخاصة بهما كالتالي: نوع العلاقة الزمنية: البداية - النهاية (Start-to-Finish (SF. مدة النشاط: 8 أيام، مدة النشاط B 5 أيام، فترة التسبيق الزمنية (Lead): 2 أيام. ما هي المدة الزمنية الإجمالية الصغرى اللازمة لإنهاء هذين النشاطين معاً في المشروع؟`, options: ["11", "10", "14", "15"], correctIndex: 3, note: null },
+        { section: 9, text: `إذا علمت أن هناك علاقة زمنية بين نشاطين متتاليين من مشروع ما، وكانت المعطيات الخاصة بهما كالتالي: نوع العلاقة الزمنية: البداية - النهاية (Start-to-Finish (SF. مدة النشاط 10 أيام، مدة النشاط: 6 أيام، فترة التسبيق الزمنية (Lead): 4 أيام. ما هي المدة الزمنية الإجمالية الصغرى اللازمة لإنهاء هذين النشاطين معاً في المشروع؟`, options: ["10", "14", "16", "20"], correctIndex: 3, note: null }
+    ];
+
+    let selectedSections = new Set();
+    let currentQuestionsList = [];
+    let currentQuestionIndex = 0;
+    let wrongQuestions = [];
+    let isRetryMode = false;
+
+    const sectionsContainer = document.getElementById('sections-container');
+    const allIcon = document.createElement('div');
+    allIcon.className = 'section-icon';
+    allIcon.innerHTML = `<div class="icon">🌟</div><div class="title">جميع الأقسام</div><div class="count">${questionsData.length} سؤال متاح</div>`;
+    allIcon.onclick = () => toggleAllSections();
+    sectionsContainer.appendChild(allIcon);
+
+    sectionsInfo.forEach(sec => {
+        const qCount = questionsData.filter(q => q.section === sec.id).length;
+        const div = document.createElement('div');
+        div.className = 'section-icon';
+        div.innerHTML = `<div class="icon">${sec.icon}</div><div class="title">${sec.name}</div><div class="count">${qCount} سؤال</div>`;
+        div.onclick = () => toggleSection(sec.id, div);
+        div.dataset.id = sec.id;
+        sectionsContainer.appendChild(div);
+    });
+
+    function toggleSection(id, element) {
+        if (selectedSections.has(id)) {
+            selectedSections.delete(id);
+            element.classList.remove('selected');
+        } else {
+            selectedSections.add(id);
+            element.classList.add('selected');
+        }
+        updateAllIconState();
+    }
+
+    function toggleAllSections() {
+        const allSelected = selectedSections.size === sectionsInfo.length;
+        const icons = document.querySelectorAll('.section-icon:not(:first-child)');
+        if (allSelected) {
+            clearAllSections();
+        } else {
+            sectionsInfo.forEach(sec => selectedSections.add(sec.id));
+            allIcon.classList.add('selected');
+            icons.forEach(icon => icon.classList.add('selected'));
+        }
+    }
+
+    function clearAllSections() {
+        selectedSections.clear();
+        allIcon.classList.remove('selected');
+        const icons = document.querySelectorAll('.section-icon:not(:first-child)');
+        icons.forEach(icon => icon.classList.remove('selected'));
+        document.getElementById('num-questions').value = '';
+    }
+
+    document.getElementById('clear-sections-btn').onclick = clearAllSections;
+
+    document.getElementById('max-questions-btn').onclick = () => {
+        if (selectedSections.size === 0) {
+            alert('الرجاء تحديد قسم واحد على الأقل أولاً.');
+            return;
+        }
+        const filteredQ = questionsData.filter(q => selectedSections.has(q.section));
+        document.getElementById('num-questions').value = filteredQ.length;
+    };
+
+    function updateAllIconState() {
+        if (selectedSections.size === sectionsInfo.length) {
+            allIcon.classList.add('selected');
+        } else {
+            allIcon.classList.remove('selected');
+        }
+    }
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    document.getElementById('start-btn').onclick = () => {
+        if (selectedSections.size === 0 && !isRetryMode) {
+            alert('يجب تحديد قسم واحد على الأقل للبدء!');
+            return;
+        }
+
+        const isShuffleQ = document.getElementById('setting-shuffle-q').checked;
+
+        if(!isRetryMode) {
+            let filteredQ = questionsData.filter(q => selectedSections.has(q.section));
+            
+            if(filteredQ.length === 0) {
+                alert('عذراً، الأقسام المحددة لا تحتوي على أسئلة مضافة حالياً في الكود.');
+                return;
+            }
+
+            if(isShuffleQ) shuffleArray(filteredQ);
+
+            const numInput = parseInt(document.getElementById('num-questions').value);
+            if (numInput && numInput > 0 && numInput < filteredQ.length) {
+                filteredQ = filteredQ.slice(0, numInput);
+            }
+            
+            currentQuestionsList = filteredQ.map(q => ({...q, userAnswer: null, presentedOptions: []}));
+        } else {
+            currentQuestionsList = isShuffleQ ? shuffleArray([...wrongQuestions]) : [...wrongQuestions];
+            currentQuestionsList = currentQuestionsList.map(q => ({...q, userAnswer: null, presentedOptions: []}));
+            isRetryMode = false;
+        }
+
+        currentQuestionIndex = 0;
+        document.getElementById('setup-area').style.display = 'none';
+        document.getElementById('result-area').style.display = 'none';
+        document.getElementById('review-area').style.display = 'none';
+        document.getElementById('quiz-area').style.display = 'block';
+        showQuestion();
+    };
+
+    function showQuestion() {
+        const q = currentQuestionsList[currentQuestionIndex];
+        const isShuffleO = document.getElementById('setting-shuffle-o').checked;
+
+        const secInfo = sectionsInfo.find(s => s.id === q.section);
+        if (secInfo) {
+            document.getElementById('section-badge').innerText = `${secInfo.icon} ${secInfo.name}`;
+        }
+
+        document.getElementById('progress-text').innerText = `السؤال ${currentQuestionIndex + 1} من ${currentQuestionsList.length}`;
+        document.getElementById('question-text').innerText = q.text;
+        
+        const optionsContainer = document.getElementById('options-container');
+        optionsContainer.innerHTML = '';
+        const noteBox = document.getElementById('note-box');
+        noteBox.style.display = 'none';
+
+        if (!q.presentedOptions || q.presentedOptions.length === 0) {
+            let optionsArr = q.options.map((opt, index) => ({ text: opt, isCorrect: index === q.correctIndex }));
+            if(isShuffleO) shuffleArray(optionsArr);
+            q.presentedOptions = optionsArr;
+        }
+
+        q.presentedOptions.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt.text;
+            
+            if (q.userAnswer) {
+                btn.disabled = true;
+                const isInstantFB = document.getElementById('setting-instant-fb').checked;
+                if (isInstantFB) {
+                    if (opt.isCorrect) btn.classList.add('correct');
+                    else if (q.userAnswer.text === opt.text) btn.classList.add('wrong');
+                } else {
+                    if (q.userAnswer.text === opt.text) btn.classList.add('selected-neutral');
+                }
+            } else {
+                btn.onclick = () => checkAnswer(opt, btn, q.presentedOptions);
+            }
+            optionsContainer.appendChild(btn);
+        });
+
+        if (q.userAnswer && document.getElementById('setting-instant-fb').checked && q.note) {
+            noteBox.innerText = q.note;
+            noteBox.style.display = 'block';
+        }
+
+        document.getElementById('prev-btn').style.display = currentQuestionIndex === 0 ? 'none' : 'inline-block';
+        
+        if (currentQuestionIndex === currentQuestionsList.length - 1) {
+            document.getElementById('next-btn').style.display = 'none';
+            document.getElementById('finish-btn').style.display = 'inline-block';
+        } else {
+            document.getElementById('next-btn').style.display = 'inline-block';
+            document.getElementById('finish-btn').style.display = 'none';
+        }
+    }
+
+    function checkAnswer(selectedOpt, selectedBtn, optionsArr) {
+        const q = currentQuestionsList[currentQuestionIndex];
+        if (q.userAnswer) return;
+
+        const btns = document.querySelectorAll('#quiz-area .option-btn');
+        btns.forEach(btn => btn.disabled = true); 
+
+        q.userAnswer = selectedOpt;
+        const isInstantFB = document.getElementById('setting-instant-fb').checked;
+
+        if (selectedOpt.isCorrect) {
+            if (isInstantFB) selectedBtn.classList.add('correct');
+        } else {
+            if (isInstantFB) {
+                selectedBtn.classList.add('wrong');
+                btns.forEach((btn, idx) => {
+                    if (optionsArr[idx].isCorrect) btn.classList.add('correct');
+                });
+            }
+        }
+
+        if (!isInstantFB) {
+            selectedBtn.classList.add('selected-neutral');
+        }
+
+        const noteBox = document.getElementById('note-box');
+        if (isInstantFB && q.note) {
+            noteBox.innerText = q.note;
+            noteBox.style.display = 'block';
+        }
+    }
+
+    document.getElementById('prev-btn').onclick = () => {
+        if (currentQuestionIndex > 0) {
+            currentQuestionIndex--;
+            showQuestion();
+        }
+    };
+
+    document.getElementById('next-btn').onclick = () => {
+        if (currentQuestionIndex < currentQuestionsList.length - 1) {
+            currentQuestionIndex++;
+            showQuestion();
+        }
+    };
+    
+    document.getElementById('quit-btn').onclick = () => {
+        if(confirm("هل أنت متأكد أنك تريد إنهاء الاختبار مبكراً والعودة للرئيسية؟ (سيتم فقدان تقدمك الحالي)")) {
+            document.getElementById('quiz-area').style.display = 'none';
+            document.getElementById('setup-area').style.display = 'block';
+        }
+    };
+
+    document.getElementById('finish-btn').onclick = () => {
+        document.getElementById('quiz-area').style.display = 'none';
+        document.getElementById('result-area').style.display = 'block';
+        
+        let score = 0;
+        wrongQuestions = [];
+        let unanswered = 0;
+
+        currentQuestionsList.forEach(q => {
+            if (q.userAnswer) {
+                if(q.userAnswer.isCorrect) score++;
+                else wrongQuestions.push(q);
+            } else {
+                unanswered++;
+                wrongQuestions.push(q);
+            }
+        });
+        
+        const percentage = Math.round((score / currentQuestionsList.length) * 100);
+        
+        let msg = `نتيجتك: <span style="color:var(--primary-color)">${score}</span> من ${currentQuestionsList.length}<br>المعدل: %${percentage}`;
+        if(unanswered > 0) msg += `<br><span style="font-size:1rem; color:var(--error-color);">الأسئلة المتروكة: ${unanswered}</span>`;
+        
+        document.getElementById('score-text').innerHTML = msg;
+
+        const retryBtn = document.getElementById('retry-wrong-btn');
+        if (wrongQuestions.length > 0) {
+            retryBtn.style.display = 'inline-block';
+            retryBtn.innerText = `إعادة حل الخاطئة/المتروكة (${wrongQuestions.length}) ↻`;
+            retryBtn.onclick = () => {
+                isRetryMode = true;
+                document.getElementById('start-btn').click();
+            };
+        } else {
+            retryBtn.style.display = 'none';
+        }
+    };
+
+    document.getElementById('review-btn').onclick = () => {
+        document.getElementById('result-area').style.display = 'none';
+        const reviewContainer = document.getElementById('review-container');
+        reviewContainer.innerHTML = '';
+
+        currentQuestionsList.forEach((q, index) => {
+            const qBox = document.createElement('div');
+            qBox.className = 'question-box';
+            
+            const title = document.createElement('div');
+            title.className = 'progress';
+            
+            const secInfo = sectionsInfo.find(s => s.id === q.section);
+            const badgeStr = secInfo ? `<span style="font-size: 0.8rem; background:#333; padding:2px 8px; border-radius:10px; margin-right:10px; color:#fff;">${secInfo.name}</span>` : '';
+            
+            title.innerHTML = `السؤال ${index + 1} ${badgeStr}`;
+            
+            const text = document.createElement('div');
+            text.innerText = q.text;
+            text.style.marginBottom = "15px";
+            text.style.marginTop = "10px";
+
+            qBox.appendChild(title);
+            qBox.appendChild(text);
+
+            const optsDiv = document.createElement('div');
+            optsDiv.className = 'options';
+
+            q.presentedOptions.forEach(opt => {
+                const btn = document.createElement('div');
+                btn.className = 'option-btn';
+                btn.innerText = opt.text;
+
+                if (opt.isCorrect) {
+                    btn.classList.add('correct');
+                } else if (q.userAnswer && q.userAnswer.text === opt.text) {
+                    btn.classList.add('wrong');
+                }
+
+                optsDiv.appendChild(btn);
+            });
+            qBox.appendChild(optsDiv);
+
+            if (q.note) {
+                const noteBox = document.createElement('div');
+                noteBox.className = 'note-box';
+                noteBox.style.display = 'block';
+                noteBox.innerText = q.note;
+                qBox.appendChild(noteBox);
+            }
+            
+            if (!q.userAnswer) {
+                const emptyNote = document.createElement('div');
+                emptyNote.style.color = "var(--error-color)";
+                emptyNote.style.marginTop = "10px";
+                emptyNote.style.fontWeight = "bold";
+                emptyNote.innerText = "⚠️ لم تقم بالإجابة على هذا السؤال.";
+                qBox.appendChild(emptyNote);
+            }
+
+            reviewContainer.appendChild(qBox);
+        });
+
+        document.getElementById('review-area').style.display = 'block';
+    };
+
+    document.getElementById('back-to-results-btn').onclick = () => {
+        document.getElementById('review-area').style.display = 'none';
+        document.getElementById('result-area').style.display = 'block';
+    };
+
+    const restartQuiz = () => {
+        document.getElementById('result-area').style.display = 'none';
+        document.getElementById('review-area').style.display = 'none';
+        document.getElementById('setup-area').style.display = 'block';
+        isRetryMode = false;
+    };
+
+    document.getElementById('restart-btn').onclick = restartQuiz;
+    document.getElementById('restart-from-review-btn').onclick = restartQuiz;
+</script>
+
+</body>
+</html>
